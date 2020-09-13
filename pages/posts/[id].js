@@ -14,141 +14,65 @@ import Linkify from 'react-linkify';
 import Swal from 'sweetalert2';
 
 //const ipurl = "https://api.ipify.org";
-//const ipurl = "http://localhost:3000/api/hello";
-const ipurl = "https://test-ip.vercel.app/api/hello";
+const ipurl = "http://localhost:3000/api/hello";
+//const ipurl = "https://test-ip.vercel.app/api/hello";
 
 const URL_BASE = 'http://dev.zanq.co/';
 //const URL_BASE ='http://localhost/ZanQ/';
 const ANON_POST_DETAILS = URL_BASE + 'index.php/Api/Post/PostDetailWithIP';
 
-export default function Post({ postData }) {
+import { useRouter } from "next/router";
 
-    var imageArray = [];
+function myIP({ ip }) {
+    const router = useRouter()
+    const { id } = router.query; // Destructuring our router object
 
-    /*
-    if ((postData.images) && (postData.images.length > 0)) {
-
-        for (var i = 0; i < postData.images.length; i++) {
-                        
-            //Add to Array to send to Image Carousel
-            var imageObj = new Object();
-            imageObj.src = URL_BASE + postData.images[i];
-            imageObj.altText = "Image " + (i + 1);
-            imageArray.push(imageObj);
-        }
-    }
-    else {
-
-        var imageObj1 = new Object();
-        imageObj1.src = "/images/noimage.jpeg";
-        imageObj1.altText = "Image 1";
-        imageArray.push(imageObj1);
-
-    }
-    */
     return (
-        
-      <Layout>
-        <React.Fragment>    
-            { postData }
-        </React.Fragment>
-      </Layout>
-    )
-}
+        <>
+          <h2>
+            {id} with IP {ip}
+          </h2>
+        </>
+    );
+  }
+  
+  myIP.getInitialProps = async (ctx) => {
+    const ipresponse = await axios.get(ipurl)
+            .catch(errors => console.log(errors));
+    let ip = await ipresponse.data;
 
-//Changes the middle widget based on Navigations clicked
-function buttonClicked(event, value) {
+    return { ip: ip }
+  }
+  
+export default myIP
 
-    //Split to figure out if user Clicked on Zan, Comment or Share
-    var res = value;
-
-     Swal.fire({
-        icon: 'error',
-        title: 'Registration Required',
-        text: res + ' are only available to registered users',
-        footer: '<a href="http://dev.zanq.co/Zan/">Register here</a>'
-      })
-}
-
-export async function getServerSideProps({ params }) {
+ /* 
+export default function myIP() {
+    const router = useRouter()
+    const { id } = router.query; // Destructuring our router object
     
-    /*
-    let postData = await sendID(params.id)
-        .then((data) => {
+    let ipresponse = axios.get(ipurl)
+        .catch(errors => console.log(errors));
+    let ip = ipresponse.data;
 
-            //Success
-            if (data['code'] === 1) {
+    return (
+        <>
+          <h2>
+            {id} with IP {ip}
+          </h2>
+        </>
+    );
+};
 
-                return (
-                        data['data']
-                )
-            }  
-            else {
-                var error2 = new Error(data['message']);
-                throw error2;
-            }  
-        })
-    .catch(error => console.log(error))
+function returnIP () {
 
-    return {
-      props: {
-        postData
-      }
-    }*/
+    let ipresponse = axios.get(ipurl)
+              .catch(errors => console.log(errors));
+    let ip = ipresponse.data;
 
-    let postData = await sendID(params.id);
-    return {
-        props: {
-          postData
-        }
-    }
-}
-
-async function sendID (id) {
-
-    const res = await fetch(ipurl)
-    const posts = await res.json()
-  
-    let ip = posts.clientIP;
-    //console.log("ID - : " + id);
-    console.log("IP - : " + ip);
-  
+    console.log("IP is -- : " + ip)
     return ip;
-
-    //Data Object to Pass Through
-    /*const DetailRequest = {
-          postId: id,
-          ip: await ip,
-    }
-  
-    let response = await fetch(ANON_POST_DETAILS, { 
-      method: 'POST',
-      headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: "params=" + JSON.stringify(DetailRequest) + "&developer=1",
-      credentials: 'same-origin'
-      })
-      .then(response => {
-              if (response.ok) {
-                      return response;
-              }
-              else {
-                      var error = new Error('Error ' + response.status + ': ' + response.statusText);
-                      error.response = response;
-                      throw error;
-              }
-      },
-      error => {
-              var errorMessage = new Error(error.errorMessage);
-              throw errorMessage;
-      }) 
-  
-    let data = await response.json();
-    
-    return (
-        data
-    )*/
-}
+}*/
+ 
 
 
