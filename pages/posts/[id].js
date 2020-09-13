@@ -2,6 +2,8 @@ import Layout from '../../components/layout'
 import Link from 'next/link'
 import previewStyles from '../../styles/preview.module.css'
  
+import React, { Component } from 'react';
+
 //import { getAllPostIds, getPostData, getPostDetails } from '../../lib/posts'
 import Head from 'next/head'
 import styles from '../../components/layout.module.css'
@@ -23,6 +25,63 @@ const ANON_POST_DETAILS = URL_BASE + 'index.php/Api/Post/PostDetailWithIP';
 
 import { useRouter } from "next/router";
 
+class myIP extends Component {
+
+    constructor() {
+
+        super();
+
+        this.state = {
+            clientIP: '',
+            ID: ''
+        };
+    }
+    
+    async sendIP () {
+
+        let ipresponse = await axios.get(ipurl)
+                  .catch(errors => console.log(errors));
+        let data = await ipresponse.data;
+
+        return data;
+    }
+  
+    getRecommendations () {
+    
+        this.sendIP().then((data) => {
+
+            console.log("IP is -- " + data);
+            this.setState({clientIP : data})
+
+        })
+        .catch(error => {
+                Swal.fire({
+                        icon: 'error',
+                        title: 'Recommendations Error',
+                        text: error.message 
+                      })
+        });
+    }
+
+    componentDidMount() {
+
+        this.getRecommendations(); 
+    }
+
+    render() { 
+        
+
+        return (
+            <h2>
+                IP is {this.state.clientIP}
+            </h2>
+        );
+    }
+}
+
+export default myIP;
+
+/*
 function myIP({ ip }) {
     const router = useRouter()
     const { id } = router.query; // Destructuring our router object
@@ -45,7 +104,7 @@ function myIP({ ip }) {
   }
   
 export default myIP
-
+*/
  /* 
 export default function myIP() {
     const router = useRouter()
