@@ -106,10 +106,10 @@ export async function getServerSideProps({ params }) {
 
 async function sendID (id) {
 
-    let ipresponse = await axios.get(ipurl)
-              .catch(errors => console.log(errors));
-    let ip = await ipresponse.data;
+    const res = await fetch(ipurl)
+    const posts = await res.json()
   
+    let ip = posts.clientIP;
     //console.log("ID - : " + id);
     console.log("IP - : " + ip);
   
