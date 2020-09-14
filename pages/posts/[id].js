@@ -16,8 +16,8 @@ import Linkify from 'react-linkify';
 import Swal from 'sweetalert2';
 
 //const ipurl = "https://api.ipify.org";
-const ipurl = "http://localhost:3000/api/hello";
-//const ipurl = "https://test-ip.vercel.app/api/hello";
+//const ipurl = "http://localhost:3000/api/hello";
+const ipurl = "https://test-ip.vercel.app/api/hello";
 
 const URL_BASE = 'http://dev.zanq.co/';
 //const URL_BASE ='http://localhost/ZanQ/';
