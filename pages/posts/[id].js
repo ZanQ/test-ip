@@ -2,7 +2,7 @@ import Layout from '../../components/layout'
 import Link from 'next/link'
 import previewStyles from '../../styles/preview.module.css'
  
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 
 //import { getAllPostIds, getPostData, getPostDetails } from '../../lib/posts'
 import Head from 'next/head'
@@ -16,94 +16,75 @@ import Linkify from 'react-linkify';
 import Swal from 'sweetalert2';
 
 //const ipurl = "https://api.ipify.org";
-//const ipurl = "http://localhost:3000/api/hello";
-const ipurl = "https://test-ip.vercel.app/api/hello";
+const ipurl = "http://localhost:3000/api/hello";
+//const ipurl = "https://test-ip.vercel.app/api/hello";
 
 const URL_BASE = 'http://dev.zanq.co/';
 //const URL_BASE ='http://localhost/ZanQ/';
 const ANON_POST_DETAILS = URL_BASE + 'index.php/Api/Post/PostDetailWithIP';
 
 import { useRouter } from "next/router";
+import { withRouter } from 'next/router'
 
-class myIP extends Component {
+/*class myIP extends Component {
 
-    constructor() {
+  static async getInitialProps(ctx) {
+    const res = await fetch(ipurl)
+    const json = await res.json()
+    return { stars: json.clientIP }
+  }
 
-        super();
+  render() {
+    return <div>Next stars: {this.props.stars}</div>
+  }
+}
 
-        this.state = {
-            clientIP: '',
-            ID: ''
-        };
-    }
-    
-    async sendIP () {
+export default myIP;*/
 
-        let ipresponse = await axios.get(ipurl)
-                  .catch(errors => console.log(errors));
-        let data = await ipresponse.data;
+function myIP() {
+    const router = useRouter()
+    const { id } = router.query; // Destructuring our router object
+    const [ip, setIp] = useState(<div/>);
 
-        return data;
-    }
+    useEffect(() => {
+        returnIP()
+            .then((ip) => {
+                const componentIp = <>
+                    <h2>
+                         IP -- {ip}
+                    </h2>
+                </>;
+
+                setIp(componentIp)
+                return componentIp;
+            })
+            .catch(error => "Error" )
+    }, [])
+
+    return ip;
+}
   
-    getRecommendations () {
-    
-        this.sendIP().then((data) => {
+async function returnIP () {
 
-            console.log("IP is -- " + data);
-            this.setState({clientIP : data})
+    let ipresponse = await axios.get(ipurl)
+              .catch(errors => console.log(errors));
+    let ip = await ipresponse.data;
 
-        })
-        .catch(error => {
-                Swal.fire({
-                        icon: 'error',
-                        title: 'Recommendations Error',
-                        text: error.message 
-                      })
-        });
-    }
-
-    componentDidMount() {
-
-        this.getRecommendations(); 
-    }
-
-    render() { 
-        
-
-        return (
-            <h2>
-                IP is {this.state.clientIP}
-            </h2>
-        );
-    }
+    console.log("IP is -- : " + ip)
+    return ip;
 }
 
 export default myIP;
 
-/*
-function myIP({ ip }) {
-    const router = useRouter()
-    const { id } = router.query; // Destructuring our router object
+/*  myIP.getInitialProps = async (ctx) => {
+    const res = await fetch(ipurl)
+    const json = await res.json()
 
-    return (
-        <>
-          <h2>
-            {id} with IP {ip}
-          </h2>
-        </>
-    );
+    console.log("IP is -- : " + json.clientIP)
+    return json.clientIP;
   }
   
-  myIP.getInitialProps = async (ctx) => {
-    const ipresponse = await axios.get(ipurl)
-            .catch(errors => console.log(errors));
-    let ip = await ipresponse.data;
-
-    return { ip: ip }
-  }
-  
-export default myIP
+export default myIP;
 */
  /* 
 export default function myIP() {
