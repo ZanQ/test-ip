@@ -144,8 +144,6 @@ function PostDetails(postData) {
             <meta property="twitter:description" content={postData.content.substring(0, postData.content.indexOf('.'))} />
             <meta property="twitter:image" content={imageArray[0].src} />
 
-            <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
-
         </Head>  
         <React.Fragment>
             <Row className={styles.headerTagline}>

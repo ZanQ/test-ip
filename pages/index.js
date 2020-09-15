@@ -11,6 +11,7 @@ export default function Home() {
             content="Preview Page"
         />
         <title>{siteTitle}</title>
+        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
       </Head>
       <section className={utilStyles.headingMd}>…</section>
       <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
