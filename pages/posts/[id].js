@@ -24,95 +24,187 @@ const URL_BASE = 'http://dev.zanq.co/';
 const ANON_POST_DETAILS = URL_BASE + 'index.php/Api/Post/PostDetailWithIP';
 
 import { useRouter } from "next/router";
-import { withRouter } from 'next/router'
-
-/*class myIP extends Component {
-
-  static async getInitialProps(ctx) {
-    const res = await fetch(ipurl)
-    const json = await res.json()
-    return { stars: json.clientIP }
-  }
-
-  render() {
-    return <div>Next stars: {this.props.stars}</div>
-  }
-}
-
-export default myIP;*/
 
 function myIP() {
+    
     const router = useRouter()
-    const { id } = router.query; // Destructuring our router object
-    const [ip, setIp] = useState(<div/>);
+    let pid;
 
     useEffect(() => {
-        returnIP()
-            .then((ip) => {
-                const componentIp = <>
-                    <h2>
-                         IP -- {ip}
-                    </h2>
-                </>;
+         pid = router.query;
+    }, [router]);
+    
+    const [postData, setData] = useState(<div/>);
 
-                setIp(componentIp)
-                return componentIp;
-            })
-            .catch(error => "Error" )
-    }, [])
+    useEffect(() => {
+                if (Object.values(pid).length > 0) {  
+                    console.log("PID -- " + Object.values(pid));
+                    sendID(pid)
+                        .then((postData) => {
+                            
+                            console.log("IP -- " + postData['data'].id);
+                            const componentIp = PostDetails(postData['data']);
 
-    return ip;
+                            setData(componentIp)
+                            return componentIp;
+                        })
+                        .catch(error => "Error" )
+                }
+    }, [router])
+
+    return postData;
+    
 }
-  
-async function returnIP () {
+
+async function sendID (id) {
+
+    id = Object.values(id)[0];
 
     let ipresponse = await axios.get(ipurl)
               .catch(errors => console.log(errors));
     let ip = await ipresponse.data;
+  
+    console.log("ID - : " + id);
+    console.log("IP - : " + ip);
+  
+    //Data Object to Pass Through
+    const DetailRequest = {
+          postId: id,
+          ip: await ip,
+    }
+  
+    console.log("JSON : " + JSON.stringify(DetailRequest));
 
-    console.log("IP is -- : " + ip)
-    return ip;
+    let response = await fetch(ANON_POST_DETAILS, { 
+      method: 'POST',
+      headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: "params=" + JSON.stringify(DetailRequest) + "&developer=1",
+      credentials: 'same-origin'
+      })
+      .then(response => {
+              if (response.ok) {
+                      return response;
+              }
+              else {
+                      var error = new Error('Error ' + response.status + ': ' + response.statusText);
+                      error.response = response;
+                      throw error;
+              }
+      },
+      error => {
+              var errorMessage = new Error(error.errorMessage);
+              throw errorMessage;
+      }) 
+  
+    let data = await response.json();
+    
+    return (
+        data
+    )
+}
+
+function PostDetails(postData) {
+
+    var imageArray = [];
+
+    if ((postData.images) && (postData.images.length > 0)) {
+
+        for (var i = 0; i < postData.images.length; i++) {
+                        
+            //Add to Array to send to Image Carousel
+            var imageObj = new Object();
+            imageObj.src = URL_BASE + postData.images[i];
+            imageObj.altText = "Image " + (i + 1);
+            imageArray.push(imageObj);
+        }
+    }
+    else {
+
+        var imageObj1 = new Object();
+        imageObj1.src = "/images/noimage.jpeg";
+        imageObj1.altText = "Image 1";
+        imageArray.push(imageObj1);
+
+    }
+
+    return (
+        
+      <Layout>
+        <Head>
+        <link rel="icon" href="/favicon.ico" />
+        <meta property="og:url" content="http://zanq.co" />
+        <meta property="og:description" content={postData.content.substring(0, postData.content.indexOf('.'))} />
+        <meta property="og:image" content={imageArray[0].src} />
+        
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:title" content={postData.nickname} />
+        <meta property="twitter:description" content={postData.content.substring(0, postData.content.indexOf('.'))} />
+        <meta property="twitter:image" content={imageArray[0].src} />
+      </Head>  
+        <React.Fragment>
+            <Row className={styles.headerTagline}>
+                <Col md={3} xs={2}>
+                    <img src="/images/default_logo.png" height="41" width="41" alt="ZanQ"></img>
+                </Col>
+                <Col md={9} xs={10}>
+                    <span className="title-text">ZanQ: Anonymous Personal Stories</span>
+                </Col>
+            </Row>
+        </React.Fragment>    
+        <header className={styles.header}>
+            { 
+            <>
+                    <img
+                    src={postData.user_avatar}
+                    className={`${styles.headerImage} ${utilStyles.borderCircle}`}
+                    alt={postData.nickname}
+                    />
+            
+                <h4>
+                    <div className={utilStyles.headingLg}>{postData.nickname}</div>
+                    <br />
+                    <div className={utilStyles.headingSm}>Points: {postData.user_score}</div>
+                </h4>    
+            </>
+            }
+        </header>   
+        <React.Fragment>
+                <Card className="renderDetails">
+                        <Slideshow items={imageArray} />
+                        <CardBody className={previewStyles.white_space_pre}><Linkify>{postData.content}</Linkify></CardBody>
+                        <span className="borderbottom" />
+                        <CardFooter>
+                            <Row className="row-center">
+                                <Col onClick={(e) => buttonClicked(e, "Zans")} md={5} xs={4}>
+                                    <Row className="ml-2">
+                                        <img src="/images/ic_zan_logo.png" className="story-footer-margin-img" alt="Zanned Icon" />
+                                        <span className="story-footer-margins">{postData.praise_num}</span>
+                                    </Row>
+                                </Col>
+                                <Col onClick={(e) => buttonClicked(e, "Comments")} md={5} xs={4}>
+                                    <Row className="ml-1">
+                                        <div className="fa fa-comments fa-lg story-footer-margin-img" />
+                                        <span className="story-footer-margins">{postData.comment_num}</span>
+                                    </Row> 
+                                </Col>
+                                <Col md={2} xs={4}>
+                                    <Row className="ml-1">
+                                        <div className="fa fa-eye fa-lg story-footer-margin-img" />
+                                        <span className="story-footer-margins">{postData.number_visits}</span>
+                                    </Row>
+                                </Col>
+                            </Row> 
+                        </CardFooter>
+                    </Card>
+        </React.Fragment>
+      </Layout>
+    )
 }
 
 export default myIP;
 
-/*  myIP.getInitialProps = async (ctx) => {
-    const res = await fetch(ipurl)
-    const json = await res.json()
-
-    console.log("IP is -- : " + json.clientIP)
-    return json.clientIP;
-  }
-  
-export default myIP;
-*/
- /* 
-export default function myIP() {
-    const router = useRouter()
-    const { id } = router.query; // Destructuring our router object
-    
-    let ipresponse = axios.get(ipurl)
-        .catch(errors => console.log(errors));
-    let ip = ipresponse.data;
-
-    return (
-        <>
-          <h2>
-            {id} with IP {ip}
-          </h2>
-        </>
-    );
-};
-
-function returnIP () {
-
-    let ipresponse = axios.get(ipurl)
-              .catch(errors => console.log(errors));
-    let ip = ipresponse.data;
-
-    console.log("IP is -- : " + ip)
-    return ip;
-}*/
  
 
 
