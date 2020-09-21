@@ -1,5 +1,5 @@
 
-function Post  ({postData}) {
+export default function Post  ({postData}) {
 
     return (
         <>
@@ -21,5 +21,3 @@ export async function getServerSideProps({ params }) {
       }
     }
 }
-
-export { Post };

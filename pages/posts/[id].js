@@ -15,7 +15,7 @@ import Slideshow from "./SlideshowSupport";
 import Linkify from 'react-linkify';
 import Swal from 'sweetalert2';
 
-import { Post } from '../components/finaldisplayComponent';
+import Post from '../components/finaldisplayComponent';
 
 //const ipurl = "https://api.ipify.org";
 //const ipurl = "http://localhost:3000/api/hello";
