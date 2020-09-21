@@ -1,4 +1,5 @@
-import Layout from '../../components/layout'
+import Layout, { siteTitle } from '../../components/layout'
+import utilStyles from '../../styles/utils.module.css'
 import Link from 'next/link'
 import previewStyles from '../../styles/preview.module.css'
  
@@ -10,22 +11,24 @@ import styles from '../../components/layout.module.css'
 import axios from 'axios'
 import fetch from 'node-fetch'
 import { Card, CardBody, CardTitle, CardImg, Row, Col, CardText, Container, CardFooter, Navbar, NavbarBrand } from 'reactstrap';
-import utilStyles from '../../styles/utils.module.css'
 import Slideshow from "./SlideshowSupport";
 import Linkify from 'react-linkify';
 import Swal from 'sweetalert2';
 
-//const ipurl = "https://api.ipify.org";
-//const ipurl = "http://localhost:3000/api/hello";
-const ipurl = "https://test-ip.vercel.app/api/hello";
+import { Loading } from '../components/LoadingComponent';
+import { Post } from '../components/finaldisplayComponent';
 
-const URL_BASE = 'https://dev.zanq.co/';
-//const URL_BASE ='http://localhost/ZanQ/';
+//const ipurl = "https://api.ipify.org";
+const ipurl = "http://localhost:3000/api/hello";
+//const ipurl = "https://test-ip.vercel.app/api/hello";
+
+//const URL_BASE = 'https://dev.zanq.co/';
+const URL_BASE ='http://localhost/ZanQ/';
 const ANON_POST_DETAILS = URL_BASE + 'index.php/Api/Post/PostDetailWithIP';
 
 import { useRouter } from "next/router";
 
-function myIP() {
+const myIP = () => {
     
     const router = useRouter()
     let pid;
@@ -35,25 +38,136 @@ function myIP() {
     }, [router]);
     
     const [postData, setData] = useState(<div/>);
+    const [postDataDetails, setDataDetails] = useState(<div/>);
 
     useEffect(() => {
                 if (Object.values(pid).length > 0) {  
                     console.log("PID -- " + Object.values(pid));
                     sendID(pid)
                         .then((postData) => {
-                            
-                            console.log("IP -- " + postData['data'].id);
-                            const componentIp = PostDetails(postData['data']);
+                    
+                            //console.log("Test : " + postData['data'].id);
+                            /*const componentIp = PostDetails(postData['data']);
 
                             setData(componentIp)
+                            
+                            return componentIp;*/
+                            const componentIp = postData['data'];
+
+                            setData(componentIp)
+
+                            //console.log("Test2 : " + componentIp.id);
                             return componentIp;
                         })
                         .catch(error => "Error" )
                 }
     }, [router])
 
-    return postData;
+    var imageArray = [];
     
+    if (postData.images) {
+
+        //Add to Array to send to Image Carousel
+        var imageObj = new Object();
+        imageObj.src = URL_BASE + postData.images[0];
+        imageObj.altText = "Image 1";
+        imageArray.push(imageObj);
+
+        console.log("Image : " + imageArray[0].src);
+        /*if (postData.images) {
+
+
+            console.log("Images : " + postData.images);
+
+            //var imageArr = postData.images.split(",");
+            console.log("Split : " + Object.prototype.toString.call(postData.images));
+            console.log("First Image : " + postData.images[0]);
+            console.log("Second Image : " + postData.images[1]);
+
+        
+        }*/
+
+        return (
+            <>
+            <Layout>
+                <Head>
+                    <link rel="icon" href="/favicon.ico" />  
+                    <meta property="og:url" content="http://zanq.co" />  
+                    <meta property="og:image" content={ imageArray[0].src } /> 
+                </Head>
+                <h3> { postData.content } </h3>
+            </Layout>
+            
+            </>
+        );
+    }
+
+    else {
+
+        console.log("In Return, Post ID: " + pid);
+        return <span>{ Post("Hello") }</span>;
+    }
+
+/*
+    if ((postData.images) && (postData.images.length > 0)) {
+
+        var temparray = [];
+        temparray = postData.images.split(",");
+
+        //Add to Array to send to Image Carousel
+        var imageObj = new Object();
+        imageObj.src = URL_BASE + temparray.images[0];
+        imageObj.altText = "Image 1";
+        imageArray.push(imageObj);
+    }
+    else {
+
+        var imageObj1 = new Object();
+        imageObj1.src = "/images/noimage.jpeg";
+        imageObj1.altText = "Image 1";
+        imageArray.push(imageObj1);
+    }
+
+    return (
+        <>
+        <Layout>
+            <Head>
+                <link rel="icon" href="/favicon.ico" />  
+                <meta property="og:url" content="http://zanq.co" />  
+                <meta property="og:image" content={imageArray[0].src} />   
+            </Head>
+            <h3>{ postData.content }</h3>
+        </Layout>
+           
+        </>
+    );
+    */
+    /*
+    console.log("IP -- " + postData['data'].id);
+
+    
+
+    //return postData;
+    return (
+        <>
+        <Layout>
+            <Head>
+                <link rel="icon" href="/favicon.ico" />
+                
+                <meta property="og:url" content="http://zanq.co" />
+                <meta property="og:description" content={postData.content.substring(0, postData.content.indexOf('.'))} />
+                <meta property="og:image" content={imageArray[0].src} />
+                
+                <meta property="twitter:card" content="summary_large_image" />
+                <meta property="twitter:title" content={postData.nickname} />
+                <meta property="twitter:description" content={postData.content.substring(0, postData.content.indexOf('.'))} />
+                <meta property="twitter:image" content={imageArray[0].src} />
+
+            </Head>  
+        </Layout>
+        { PostDetails(postData) }
+        </>
+      )*/
 }
 
 async function sendID (id) {
@@ -206,7 +320,5 @@ function PostDetails(postData) {
 }
 
 export default myIP;
-
- 
 
 
