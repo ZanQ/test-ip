@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 
-const ipurl = "http://localhost:3000/api/hello";
+const ipurl = "https://test-ip.vercel.app/api/hello";
 
 function Page({ ip }) {
   const router = useRouter()
