@@ -15,15 +15,14 @@ import Slideshow from "./SlideshowSupport";
 import Linkify from 'react-linkify';
 import Swal from 'sweetalert2';
 
-import { Loading } from '../components/LoadingComponent';
 import { Post } from '../components/finaldisplayComponent';
 
 //const ipurl = "https://api.ipify.org";
-const ipurl = "http://localhost:3000/api/hello";
-//const ipurl = "https://test-ip.vercel.app/api/hello";
+//const ipurl = "http://localhost:3000/api/hello";
+const ipurl = "https://test-ip.vercel.app/api/hello";
 
-//const URL_BASE = 'https://dev.zanq.co/';
-const URL_BASE ='http://localhost/ZanQ/';
+const URL_BASE = 'https://dev.zanq.co/';
+//const URL_BASE ='http://localhost/ZanQ/';
 const ANON_POST_DETAILS = URL_BASE + 'index.php/Api/Post/PostDetailWithIP';
 
 import { useRouter } from "next/router";
@@ -38,7 +37,6 @@ const myIP = () => {
     }, [router]);
     
     const [postData, setData] = useState(<div/>);
-    const [postDataDetails, setDataDetails] = useState(<div/>);
 
     useEffect(() => {
                 if (Object.values(pid).length > 0) {  
