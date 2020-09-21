@@ -1,10 +1,9 @@
 
-
-const Post = function( postData ) {
+function Post  ({postData}) {
 
     return (
         <>
-            <h2>{postData}</h2>
+            <h2>This is {postData}</h2>
         </>
 
     );
