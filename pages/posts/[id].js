@@ -5,7 +5,6 @@ import previewStyles from '../../styles/preview.module.css'
  
 import React, { useState, useEffect } from 'react';
 
-//import { getAllPostIds, getPostData, getPostDetails } from '../../lib/posts'
 import Head from 'next/head'
 import styles from '../../components/layout.module.css'
 import axios from 'axios'
@@ -31,8 +30,6 @@ const API_URL = 'https://extreme-ip-lookup.com/json/';
 //const URL_BASE = 'https://dev.zanq.co/';
 const URL_BASE ='http://localhost/ZanQ/';
 const ANON_POST_DETAILS = URL_BASE + 'index.php/Api/Post/PostDetailWithIP';
-
-import { getPost } from '../components/getPost';
 
 const myIP = ({ post }) => {
 
@@ -163,16 +160,34 @@ async function getIP() {
     
 }
 
+const getPost = async (id) => {
+  
+    const ip = "888.888.888.8888";
+  
+    const response = await sendID(ip, id)
+          .then((data) => {
+  
+              //Success
+              if (data['code'] === 1) {
+  
+                  return (
+                          data['data']
+                  )
+              }  
+              else {
+                  var error2 = new Error(data['message']);
+                  throw error2;
+              }  
+          })
+      .catch(error => console.log(error))
+  
+      return (
+          response
+      );
+};
 
 async function sendID (ip, id) {
 
-    /*let ipresponse = await axios.get(ipurl)
-              .catch(errors => console.log(errors));
-    let ip = await ipresponse.data;*/
-
-    //console.log("ID - : " + id);
-    //console.log("IP - : " + ip);
-  
     if (ip.length > 0) {
 
         //Data Object to Pass Through

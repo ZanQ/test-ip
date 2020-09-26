@@ -3,7 +3,7 @@ import axios from 'axios';
 const URL_BASE ='http://localhost/ZanQ/';
 const ANON_POST_DETAILS = URL_BASE + 'index.php/Api/Post/PostDetailWithIP';
 
-export const getPost = async (id) => {
+const getPost = async (id) => {
   //const response = await axios.get(`https://www.mywordpress.com/wp-json/wp/v2/posts?slug=${slug}`);
 
   const ip = "888.888.888.8888";
@@ -13,9 +13,6 @@ export const getPost = async (id) => {
 
             //Success
             if (data['code'] === 1) {
-
-                //console.log("Code : " + data['code']);
-                //console.log("Data : " + Object.values(data['data']));
 
                 return (
                         data['data']
@@ -35,13 +32,6 @@ export const getPost = async (id) => {
 
 async function sendID (ip, id) {
 
-    /*let ipresponse = await axios.get(ipurl)
-              .catch(errors => console.log(errors));
-    let ip = await ipresponse.data;*/
-
-    //console.log("ID - : " + id);
-    //console.log("IP - : " + ip);
-  
     if (ip.length > 0) {
 
         //Data Object to Pass Through
@@ -82,3 +72,5 @@ async function sendID (ip, id) {
         )
     }
 }
+
+export default getPost;
