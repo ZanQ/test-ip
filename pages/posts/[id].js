@@ -23,8 +23,8 @@ const ipurl = "https://test-ip.vercel.app/api/hello";
 const API_URL = 'https://extreme-ip-lookup.com/json/';
 
 
-//const URL_BASE = 'https://dev.zanq.co/';
-const URL_BASE ='http://localhost/ZanQ/';
+const URL_BASE = 'https://dev.zanq.co/';
+//const URL_BASE ='http://localhost/ZanQ/';
 const ANON_POST_DETAILS = URL_BASE + 'index.php/Api/Post/PostDetailWithIP';
 
 const myIP = ({ post }) => {
