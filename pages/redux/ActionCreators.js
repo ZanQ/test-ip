@@ -5,18 +5,18 @@ import axios from 'axios';
 //Login - SplashScreen Redux 
 export const ipLoading = () => ({
 
-    type: ActionTypes.LOGIN_LOADING
+    type: ActionTypes.IP_LOADING
 });
 
 export const ipFailed = (errmessage) => ({
 
-    type:ActionTypes.LOGIN_FAILED,
+    type:ActionTypes.IP_FAILED,
     payload: errmessage
 })
 
 export const ipSuccess = (user) => ({
 
-        type: ActionTypes.LOGIN,
+        type: ActionTypes.IP,
         payload: user
 });
 
