@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
-//import myIP   from '../components/getIP'
-import Index from '../components/getIP';
 
 const ipurl = "https://test-ip.vercel.app/api/hello";
 
