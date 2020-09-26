@@ -9,212 +9,209 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head'
 import styles from '../../components/layout.module.css'
 import axios from 'axios'
-import fetch from 'node-fetch'
+//import fetch from 'node-fetch'
 import { Card, CardBody, CardTitle, CardImg, Row, Col, CardText, Container, CardFooter, Navbar, NavbarBrand } from 'reactstrap';
 import Slideshow from "./SlideshowSupport";
 import Linkify from 'react-linkify';
 import Swal from 'sweetalert2';
+
+import fetch from 'isomorphic-unfetch';
+import useSWR from 'swr';
+
+import Index from '../components/getIP';
 
 import Post from '../components/finaldisplayComponent';
 
 //const ipurl = "https://api.ipify.org";
 //const ipurl = "http://localhost:3000/api/hello";
 const ipurl = "https://test-ip.vercel.app/api/hello";
+const API_URL = 'https://extreme-ip-lookup.com/json/';
 
-const URL_BASE = 'https://dev.zanq.co/';
-//const URL_BASE ='http://localhost/ZanQ/';
+
+//const URL_BASE = 'https://dev.zanq.co/';
+const URL_BASE ='http://localhost/ZanQ/';
 const ANON_POST_DETAILS = URL_BASE + 'index.php/Api/Post/PostDetailWithIP';
 
-import { useRouter } from "next/router";
+import { getPost } from '../components/getPost';
 
-const myIP = () => {
-    
-    const router = useRouter()
-    let pid;
+const myIP = ({ post }) => {
 
-    useEffect(() => {
-         pid = router.query;
-    }, [router]);
-    
-    const [postData, setData] = useState(<div/>);
+    console.log("Post " + post.id)
 
-    useEffect(() => {
-                if (Object.values(pid).length > 0) {  
-                    console.log("PID -- " + Object.values(pid));
-                    sendID(pid)
-                        .then((postData) => {
-                    
-                            //console.log("Test : " + postData['data'].id);
-                            /*const componentIp = PostDetails(postData['data']);
+    const { data, error } = useSWR(API_URL, fetcher);
 
-                            setData(componentIp)
-                            
-                            return componentIp;*/
-                            const componentIp = postData['data'];
+    if (error) return <div>failed to load</div>;
+    if (!data) return <div>loading...</div>;
 
-                            setData(componentIp)
-
-                            //console.log("Test2 : " + componentIp.id);
-                            return componentIp;
-                        })
-                        .catch(error => "Error" )
-                }
-    }, [router])
-
-    var imageArray = [];
-    
-    if (postData.images) {
-
-        //Add to Array to send to Image Carousel
-        var imageObj = new Object();
-        imageObj.src = URL_BASE + postData.images[0];
-        imageObj.altText = "Image 1";
-        imageArray.push(imageObj);
-
-        console.log("Image : " + imageArray[0].src);
-        /*if (postData.images) {
-
-
-            console.log("Images : " + postData.images);
-
-            //var imageArr = postData.images.split(",");
-            console.log("Split : " + Object.prototype.toString.call(postData.images));
-            console.log("First Image : " + postData.images[0]);
-            console.log("Second Image : " + postData.images[1]);
-
-        
-        }*/
-
-        return (
-            <>
-            <Layout>
-                <Head>
-                    <link rel="icon" href="/favicon.ico" />  
-                    <meta property="og:url" content="http://zanq.co" />  
-                    <meta property="og:image" content={ imageArray[0].src } /> 
-                </Head>
-                <h3> { postData.content } </h3>
-            </Layout>
-            
-            </>
-        );
-    }
-
-    else {
-
-        console.log("In Return, Post ID: " + pid);
-        return <span>{ Post("Hello") }</span>;
-    }
-
-/*
-    if ((postData.images) && (postData.images.length > 0)) {
-
-        var temparray = [];
-        temparray = postData.images.split(",");
-
-        //Add to Array to send to Image Carousel
-        var imageObj = new Object();
-        imageObj.src = URL_BASE + temparray.images[0];
-        imageObj.altText = "Image 1";
-        imageArray.push(imageObj);
-    }
-    else {
-
-        var imageObj1 = new Object();
-        imageObj1.src = "/images/noimage.jpeg";
-        imageObj1.altText = "Image 1";
-        imageArray.push(imageObj1);
-    }
+    const { query } = data;
 
     return (
-        <>
-        <Layout>
-            <Head>
-                <link rel="icon" href="/favicon.ico" />  
-                <meta property="og:url" content="http://zanq.co" />  
-                <meta property="og:image" content={imageArray[0].src} />   
-            </Head>
-            <h3>{ postData.content }</h3>
-        </Layout>
-           
-        </>
+        <div>
+            {post.id} -- { query }
+        </div> 
     );
-    */
-    /*
-    console.log("IP -- " + postData['data'].id);
+}
+/*
+const myIP = ({ post }) => {
+    if (id === undefined) {
+      return (
+        <div>
+          <h1>Oops</h1>
+          <p>Something has gone wrong</p>
+        </div>
+      );
+    }
 
-    
-
-    //return postData;
+  
+   const { content, slug } = post;
+  
     return (
-        <>
-        <Layout>
-            <Head>
-                <link rel="icon" href="/favicon.ico" />
-                
-                <meta property="og:url" content="http://zanq.co" />
-                <meta property="og:description" content={postData.content.substring(0, postData.content.indexOf('.'))} />
-                <meta property="og:image" content={imageArray[0].src} />
-                
-                <meta property="twitter:card" content="summary_large_image" />
-                <meta property="twitter:title" content={postData.nickname} />
-                <meta property="twitter:description" content={postData.content.substring(0, postData.content.indexOf('.'))} />
-                <meta property="twitter:image" content={imageArray[0].src} />
+      <div>
+        <h1>Post Author { content }</h1>
+        <p>Post ID: {slug}</p>
+      </div>
+    );
 
-            </Head>  
-        </Layout>
-        { PostDetails(postData) }
-        </>
-      )*/
+}*/
+
+
+myIP.getInitialProps = async ({ query }) => {
+    
+    const { id } = query;
+
+    let post = await getPost(id);
+  
+    return {
+      post
+    }
 }
 
-async function sendID (id) {
+async function getData (ip, pid) {
 
-    id = Object.values(id)[0];
+    let postData = await sendID(ip, pid)
+        .then((data) => {
 
-    let ipresponse = await axios.get(ipurl)
-              .catch(errors => console.log(errors));
-    let ip = await ipresponse.data;
+            //Success
+            if (data['code'] === 1) {
+
+                //console.log("Code : " + data['code']);
+                //console.log("Data : " + Object.values(data['data']));
+
+                return (
+                        data['data']
+                )
+            }  
+            else {
+                var error2 = new Error(data['message']);
+                throw error2;
+            }  
+        })
+    .catch(error => console.log(error))
+
+    return {
+        props: {
+          postData
+        }
+    }
+}
+
+async function fetcher(url) {
+    const res = await fetch(url);
+    const json = await res.json();
+    return json;
+}
   
-    console.log("ID - : " + id);
-    console.log("IP - : " + ip);
+async function getIP() {
   
-    //Data Object to Pass Through
-    const DetailRequest = {
-          postId: id,
-          ip: await ip,
+    let ipData = await useSWR(API_URL, fetcher)
+        .then((data) => {
+
+            if (data) {
+                console.log("Client IP : " + data.query);
+                
+                return (
+                    data.query
+                )
+            }
+            else {
+                var error2 = new Error(data['message']);
+                throw error2;
+            }  
+        })
+        .catch(error => console.log(error))
+
+    console.log("After call");
+    
+    /*if (error) {
+        console.log("Error");
+        return <div>failed to load</div>;
+    }
+    if (!data) {
+        console.log("Loading");
+        return <div>loading...</div>;
     }
   
-    console.log("JSON : " + JSON.stringify(DetailRequest));
-
-    let response = await fetch(ANON_POST_DETAILS, { 
-      method: 'POST',
-      headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: "params=" + JSON.stringify(DetailRequest) + "&developer=1",
-      credentials: 'same-origin'
-      })
-      .then(response => {
-              if (response.ok) {
-                      return response;
-              }
-              else {
-                      var error = new Error('Error ' + response.status + ': ' + response.statusText);
-                      error.response = response;
-                      throw error;
-              }
-      },
-      error => {
-              var errorMessage = new Error(error.errorMessage);
-              throw errorMessage;
-      }) 
+    const { query } = data;*/
   
-    let data = await response.json();
+    console.log("IP is " + ipData);
+    /*return (
+      <div>
+        <p>IP: {query}</p>
+      </div>
+    );*/
+    return query;
     
-    return (
-        data
-    )
+}
+
+
+async function sendID (ip, id) {
+
+    /*let ipresponse = await axios.get(ipurl)
+              .catch(errors => console.log(errors));
+    let ip = await ipresponse.data;*/
+
+    //console.log("ID - : " + id);
+    //console.log("IP - : " + ip);
+  
+    if (ip.length > 0) {
+
+        //Data Object to Pass Through
+        const DetailRequest = {
+            postId: id,
+            ip: ip,
+        }
+    
+        //console.log("JSON : " + JSON.stringify(DetailRequest));
+
+        let response = await fetch(ANON_POST_DETAILS, { 
+        method: 'POST',
+        headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: "params=" + JSON.stringify(DetailRequest) + "&developer=1",
+        credentials: 'same-origin'
+        })
+        .then(response => {
+                if (response.ok) {
+                        return response;
+                }
+                else {
+                        var error = new Error('Error ' + response.status + ': ' + response.statusText);
+                        error.response = response;
+                        throw error;
+                }
+        },
+        error => {
+                var errorMessage = new Error(error.errorMessage);
+                throw errorMessage;
+        }) 
+    
+        let data = await response.json();
+        
+        return (
+            data
+        )
+    }
 }
 
 function PostDetails(postData) {
@@ -316,7 +313,5 @@ function PostDetails(postData) {
       </Layout>
     )
 }
-
+ 
 export default myIP;
-
-

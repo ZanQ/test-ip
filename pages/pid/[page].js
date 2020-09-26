@@ -1,20 +1,21 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
+//import myIP   from '../components/getIP'
+import Index from '../components/getIP';
 
 const ipurl = "https://test-ip.vercel.app/api/hello";
 
-function Page({ ip }) {
-  const router = useRouter()
-  const { page } = router.query
+function Page({ postDetails }) {
 
-  return <div>Next stars: {ip} with Page: {page}</div> 
-}
+  /*const [postIP, setData] = useState(<div/>);
 
-Page.getInitialProps = async (ctx) => {
-  const res = await fetch(ipurl)
-  const json = await res.json()
-  return { ip: json.clientIP }
+  useEffect(() => setData(myIP()), []);
+
+  return <div>Next stars: { myIP() } </div> */
+
+
+  return <Index />;
 }
 
 export default Page

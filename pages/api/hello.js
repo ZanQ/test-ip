@@ -12,6 +12,6 @@ export default function handle(req, res) {
               ip = ip.substr(7)
   }
 
-  //res.send(ip)
-  res.json({ clientIP : ip })
+  res.send(ip)
+  //res.json({ clientIP : ip })
 }
