@@ -17,19 +17,16 @@ import Swal from 'sweetalert2';
 import fetch from 'isomorphic-unfetch';
 import useSWR from 'swr';
 
-//const ipurl = "https://api.ipify.org";
-//const ipurl = "http://localhost:3000/api/hello";
-const ipurl = "https://test-ip.vercel.app/api/hello";
 const API_URL = 'https://extreme-ip-lookup.com/json/';
 
 
-const URL_BASE = 'https://dev.zanq.co/';
+const URL_BASE = 'http://dev.zanq.co/';
 //const URL_BASE ='http://localhost/ZanQ/';
 const ANON_POST_DETAILS = URL_BASE + 'index.php/Api/Post/PostDetailWithIP';
 
 const myIP = ({ post }) => {
 
-    console.log("Post " + post.id)
+    if (!post) return <div>failed to load</div>;
 
     const { data, error } = useSWR(API_URL, fetcher);
 
@@ -72,8 +69,12 @@ myIP.getInitialProps = async ({ query }) => {
     
     const { id } = query;
 
+    console.log("Page is : " + id);
+
     let post = await getPost(id);
   
+    //console.log("Post ID is : " + post.id);
+
     return {
       post
     }
@@ -166,8 +167,11 @@ const getPost = async (id) => {
               //Success
               if (data['code'] === 1) {
   
+                  console.log("Code is " + data['code']);
+
                   return (
                           data['data']
+
                   )
               }  
               else {
@@ -183,6 +187,10 @@ const getPost = async (id) => {
 };
 
 async function sendID (ip, id) {
+
+    console.log("IP : " + ip);
+    console.log("ID : " + id);
+    console.log("Website : " + ANON_POST_DETAILS);
 
     if (ip.length > 0) {
 
