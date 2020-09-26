@@ -17,10 +17,6 @@ import Swal from 'sweetalert2';
 import fetch from 'isomorphic-unfetch';
 import useSWR from 'swr';
 
-import Index from '../components/getIP';
-
-import Post from '../components/finaldisplayComponent';
-
 //const ipurl = "https://api.ipify.org";
 //const ipurl = "http://localhost:3000/api/hello";
 const ipurl = "https://test-ip.vercel.app/api/hello";
