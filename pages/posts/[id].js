@@ -15,6 +15,8 @@ import Swal from 'sweetalert2';
 import fetch from 'isomorphic-unfetch';
 import useSWR from 'swr';
 
+import axios from 'axios';
+
 const API_URL = 'https://extreme-ip-lookup.com/json/';
 
 const URL_BASE = 'http://dev.zanq.co/';
@@ -329,6 +331,34 @@ function Index(postID) {
 }
 
 async function send_IP_and_postID (ip, id) {
+        
+    //Data Object to Pass Through
+    const DetailRequest = {
+        ip: ip,
+        postId: id,
+    }
+    
+    //Set the Form Data to Upload
+    let formData = new FormData();
+
+    formData.append("params", JSON.stringify(DetailRequest));
+    formData.append("developer", "1");
+    
+    //Upload
+    const config = {
+            Headers: "Content-Type: application/x-www-form-urlencoded"
+        }
+        
+    let response = await axios.post(ANON_IP_STORE, formData, config)
+            .catch(errors => console.log(errors));
+
+    let data = response.data;
+
+    return data;
+}
+
+/*
+async function send_IP_and_postID (ip, id) {
 
     console.log("ID : " + id);
     console.log("IP : " + ip);
@@ -366,7 +396,7 @@ async function send_IP_and_postID (ip, id) {
                 throw errorMessage;
         }) 
     }
-}
+}*/
 
 export const getServerSideProps = async ({ query }) => {
     const { id } = query;
