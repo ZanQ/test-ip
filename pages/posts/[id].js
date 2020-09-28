@@ -19,7 +19,7 @@ import axios from 'axios';
 
 const API_URL = 'https://extreme-ip-lookup.com/json/';
 
-const URL_BASE = 'http://dev.zanq.co/';
+const URL_BASE = 'https://dev.zanq.co/';
 //const URL_BASE ='http://localhost/ZanQ/';
 const ANON_POST_DETAILS = URL_BASE + 'index.php/Api/Post/PostDetailWithoutIP';
 
